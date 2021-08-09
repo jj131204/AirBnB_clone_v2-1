@@ -1,4 +1,3 @@
-
 -- Create a datbase
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 -- Create a new user
