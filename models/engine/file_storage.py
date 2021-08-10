@@ -22,17 +22,15 @@ class FileStorage:
     """def all(self):"""
     def all(self, cls=None):
 
-        new_  = {}
-
+        new_ = {}
 
         """ Returns the dictionary ``__objects`` """
         if cls:
-            for i, j  in  self.__objects.items():
+            for i, j in self.__objects.items():
 
                 if cls == j.__class__:
-                    new_[i]  = j
+                    new_[i] = j
             return (new_)
-
 
         else:
             return self.__objects
@@ -72,9 +70,12 @@ class FileStorage:
     """ new """
 
     def delete(self, obj=None):
+        """delete obj from __objects if it’s inside
+           - if obj is equal to None,
+           the method should not do anything"""
 
         if obj:
-            for key, j  in  self.__objects.items():
+            for i, j in self.__objects.items():
 
                 if obj == j:
-                   del self.__objects[key]
+                    del self.__objects[i]
