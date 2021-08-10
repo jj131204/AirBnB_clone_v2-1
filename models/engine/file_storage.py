@@ -21,7 +21,7 @@ class FileStorage:
 
     """def all(self):"""
     def all(self, cls=None):
-
+        """ returns the list of objects of one type of class. """
         new_ = {}
 
         """ Returns the dictionary ``__objects`` """
@@ -75,7 +75,7 @@ class FileStorage:
            the method should not do anything"""
 
         if obj:
-            for i, j in self.__objects.items():
+            for i, j in list(self.__objects.items()):
 
                 if obj == j:
                     del self.__objects[i]
