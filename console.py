@@ -144,7 +144,6 @@ class HBNBCommand(cmd.Cmd):
 
             value_ = value[0]
 
-
             new[value_] = split_
 
         instance = self.classes[args[0]](**new)
