@@ -132,21 +132,20 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
 
-        elif args[0] in self.classes:
-            obj = eval(args[0])()
-            obj.save()
-            print(obj.id)
-
-        else:
+        elif args[0] not in self.classes:
             print("** class doesn't exist **")
 
         """ Updated  """
 
         new = {}
         for a in args[1:]:
+            value = args.split("=")
             split_ = a.split("=")[1].replace('"', '').replace('_', ' ')
 
-            new[split_[0]] = split_
+            value_ = value[0]
+
+
+            new[value_] = split_
 
         instance = self.classes[args[0]](**new)
         print(instance.id)
