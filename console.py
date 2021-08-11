@@ -40,7 +40,6 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_create(self, arg):
-
         """
         - Creates a new instance of ``BaseModel``,
           saves it (to the JSON file) and prints the ``id``.
@@ -57,28 +56,6 @@ class HBNBCommand(cmd.Cmd):
 
         else:
             print("** class doesn't exist **")
-
-        """ Updated  """
-
-        new = {}
-        for a in arg[1:]:
-            value = a.split("=")
-
-            split_ = a.split("=")[1].replace('"', '').replace('_', ' ')
-
-            try:
-                test = int(split_[1])
-            except ValueError:
-                test = float(split_[1])
-
-        value_ = value[0]
-
-
-        new[value_] = test
-        instance = self.__classes[arg[0]](**new)
-        print(instance.id)
-        storage.save()
-
 
     def do_show(self, arg):
         """
