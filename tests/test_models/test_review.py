@@ -1,59 +1,80 @@
 #!/usr/bin/python3
-"""
-===============================================================================
-
-████████╗███████╗███████╗████████╗     ██████╗ █████╗ ███████╗███████╗███████╗
-╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝
-   ██║   █████╗  ███████╗   ██║       ██║     ███████║███████╗█████╗  ███████╗
-   ██║   ██╔══╝  ╚════██║   ██║       ██║     ██╔══██║╚════██║██╔══╝  ╚════██║
-   ██║   ███████╗███████║   ██║       ╚██████╗██║  ██║███████║███████╗███████║
-   ╚═╝   ╚══════╝╚══════╝   ╚═╝        ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
-
-===============================================================================
-"""
-
-from models.base_model import BaseModel
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.review import Review
 import unittest
-import json
-import pep8
-import datetime
+import os
+type_storage = os.getenv('HBNB_TYPE_STORAGE')
+from models.base_model import BaseModel
+
+class test_review(test_basemodel):
+    """ Class test review """
+
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "Review"
+        self.value = Review
+
+    @unittest.skipIf(type_storage == 'db', "No apply for db")
+    def test_place_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.place_id), str)
+
+    @unittest.skipIf(type_storage == 'db', "No apply for db")
+    def test_user_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.user_id), str)
+
+    @unittest.skipIf(type_storage == 'db', "No apply for db")
+    def test_text(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.text), str)
 
 
 class TestReview(unittest.TestCase):
-    """ Test Review class implementation. """
-    def test_doc_module(self):
-        """Module documentation"""
-        doc = Review.__doc__
-        self.assertGreater(len(doc), 1)
 
-    def test_pep8_conformance_review(self):
-        """ Test that models/review.py conforms to PEP8. """
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/review.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    @classmethod
+    def setUpClass(cls):
+        cls.rev1 = Review()
+        cls.rev1.place_id = "Tokyo"
+        cls.rev1.user_id = "Ash Ketchum"
+        cls.rev1.text = "Pikachu"
 
-    def test_pep8_conformance_test_review(self):
-        """
-        - Test that tests/test_models/test_review.py conforms to PEP8.
-        """
-        pep8style = pep8.StyleGuide(quiet=True)
-        res = pep8style.check_files(['tests/test_models/test_review.py'])
-        self.assertEqual(res.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    @classmethod
+    def tearDownClass(cls):
+        del cls.rev1
+        try:
+            os.remove("file.json")
+        except FileNotFoundError:
+            pass
 
-    def test_doc_constructor(self):
-        """ Constructor documentation. """
-        doc = Review.__init__.__doc__
-        self.assertGreater(len(doc), 1)
+    def test_is_subclass(self):
+        self.assertTrue(issubclass(self.rev1.__class__, BaseModel), True)
 
-    def test_class(self):
-        """ Validate the types of the attributes an class. """
-        with self.subTest(msg='Inheritance'):
-            self.assertTrue(issubclass(Review, BaseModel))
+    def test_checking_for_functions(self):
+        self.assertIsNotNone(Review.__doc__)
 
-        with self.subTest(msg='Attributes'):
-            self.assertIsInstance(Review.place_id, str)
-            self.assertIsInstance(Review.user_id, str)
-            self.assertIsInstance(Review.text, str)
+    def test_has_attributes(self):
+        self.assertTrue('id' in self.rev1.__dict__)
+        self.assertTrue('created_at' in self.rev1.__dict__)
+        self.assertTrue('updated_at' in self.rev1.__dict__)
+        self.assertTrue('place_id' in self.rev1.__dict__)
+        self.assertTrue('text' in self.rev1.__dict__)
+        self.assertTrue('user_id' in self.rev1.__dict__)
+
+    def test_attributes_are_strings(self):
+        self.assertEqual(type(self.rev1.text), str)
+        self.assertEqual(type(self.rev1.place_id), str)
+        self.assertEqual(type(self.rev1.user_id), str)
+
+    @unittest.skipIf(type_storage == 'db', "not for db")
+    def test_save(self):
+        self.rev1.save()
+        self.assertNotEqual(self.rev1.created_at, self.rev1.updated_at)
+
+    def test_to_dict(self):
+        self.assertEqual('to_dict' in dir(self.rev1), True)
