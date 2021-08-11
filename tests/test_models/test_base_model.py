@@ -1,138 +1,184 @@
 #!/usr/bin/python3
-"""
-===============================================================================
-
-████████╗███████╗███████╗████████╗     ██████╗ █████╗ ███████╗███████╗███████╗
-╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝
-   ██║   █████╗  ███████╗   ██║       ██║     ███████║███████╗█████╗  ███████╗
-   ██║   ██╔══╝  ╚════██║   ██║       ██║     ██╔══██║╚════██║██╔══╝  ╚════██║
-   ██║   ███████╗███████║   ██║       ╚██████╗██║  ██║███████║███████╗███████║
-   ╚═╝   ╚══════╝╚══════╝   ╚═╝        ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
-
-===============================================================================
-"""
-
+""" """
 from models.base_model import BaseModel
 import unittest
-import json
-import pep8
 import datetime
-from time import sleep
+from uuid import UUID
+import json
+import os
+
+type_storage = os.getenv('HBNB_TYPE_STORAGE')
 
 
+class test_basemodel(unittest.TestCase):
+    """ """
+
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = 'BaseModel'
+        self.value = BaseModel
+
+    def setUp(self):
+        """ """
+        pass
+
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except:
+            pass
+
+    def test_default(self):
+        """ """
+        i = self.value()
+        self.assertEqual(type(i), self.value)
+
+    def test_kwargs(self):
+        """ """
+        i = self.value()
+        copy = i.to_dict()
+        new = BaseModel(**copy)
+        self.assertFalse(new is i)
+
+    def test_kwargs_int(self):
+        """ """
+        i = self.value()
+        copy = i.to_dict()
+        copy.update({1: 2})
+        with self.assertRaises(TypeError):
+            new = BaseModel(**copy)
+
+    @unittest.skipIf(type_storage == 'db', "No apply for db")
+    def test_save(self):
+        """ Testing save """
+        i = self.value()
+        i.save()
+        key = self.name + "." + i.id
+        with open('file.json', 'r') as f:
+            j = json.load(f)
+            self.assertEqual(j[key], i.to_dict())
+
+    def test_str(self):
+        """ """
+        i = self.value()
+        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
+                         i.__dict__))
+
+    def test_todict(self):
+        """ """
+        i = self.value()
+        n = i.to_dict()
+        self.assertEqual(i.to_dict(), n)
+
+    def test_kwargs_none(self):
+        """ """
+        n = {None: None}
+        with self.assertRaises(TypeError):
+            new = self.value(**n)
+
+    def test_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.id), str)
+
+    def test_created_at(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.created_at), datetime.datetime)
+
+    def test_updated_at(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.updated_at), datetime.datetime)
+        n = new.to_dict()
+        new = BaseModel(**n)
+        self.assertFalse(new.created_at == new.updated_at)
+
+    def test_save_BaseModeldb(self):
+        """empty test """
+        pass
+
+
+class test_base_model_v2(unittest.TestCase):
+    """ New test class """
+
+    def test001(self):
+        """Check if city is child of BaseModel"""
+        city = BaseModel()
+        self.assertIsInstance(city, BaseModel)
+
+    def test002(self):
+        """ Check City default attributes """
+        city = BaseModel()
+        self.assertTrue(hasattr(city, "id"))
+        self.assertTrue(hasattr(city, "created_at"))
+        self.assertTrue(hasattr(city, "updated_at"))
+
+    def test004(self):
+        """ Check to_dict() function """
+        city = BaseModel()
+        city_dict = city.to_dict()
+        self.assertTrue(type(city_dict) is dict)
+        self.assertFalse("_sa_instance_state" in city_dict)
+
+    @unittest.skipIf(type_storage == 'db', "test not possible")
+    def test005(self):
+        """ Check save() """
+        city = BaseModel()
+        city.save()
+        self.assertNotEqual(city.created_at, city.updated_at)
+
+    @unittest.skipIf(type_storage == 'db', "test not possible")
+    def test006(self):
+        """ Check delete """
+        base = BaseModel()
+        base.save()
+        base.delete()
+        self.assertEqual(1, 1)
+
+
+@unittest.skipIf(type_storage != "db", "For DB")
 class TestBaseModel(unittest.TestCase):
-    """ Test for BaseModel class. """
+    """ a class for testing the base model """
 
-    def test_doc_module(self):
-        """ Module documentation. """
-        doc = BaseModel.__doc__
-        self.assertGreater(len(doc), 1)
+    @classmethod
+    def setUpClass(cls):
+        """ Example Data """
+        cls.base = BaseModel()
+        cls.base.name = "Tabs"
+        cls.base.id = "1234"
 
-    def test_pep8_conformance_base_model(self):
-        """ Test that models/base_model.py conforms to PEP8. """
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/base_model.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    @classmethod
+    def teardown(cls):
+        """ tear down cls """
+        del cls.base
 
-    def test_pep8_conformance_test_base_model(self):
-        """
-        - Test that tests/test_models/test_base_model.py conforms to PEP8.
-        """
-        pep8style = pep8.StyleGuide(quiet=True)
-        res = pep8style.check_files(['tests/test_models/test_base_model.py'])
-        self.assertEqual(res.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def tearDown(self):
+        """ tear down for file storage """
+        try:
+            os.remove("file.json")
+        except Exception:
+            pass
 
-    def test_doc_constructor(self):
-        """ Constructor documentation. """
-        doc = BaseModel.__init__.__doc__
-        self.assertGreater(len(doc), 1)
+    def test_BaseModel_methods(self):
+        """ Check if Basemodel has methods"""
+        self.assertTrue(hasattr(BaseModel, "__init__"))
+        self.assertTrue(hasattr(BaseModel, "__str__"))
+        self.assertTrue(hasattr(BaseModel, "save"))
+        self.assertTrue(hasattr(BaseModel, "delete"))
+        self.assertTrue(hasattr(BaseModel, "to_dict"))
 
-    def test_first_task(self):
-        """ Test creation of class and to_dict. """
-        my_model = BaseModel()
-        self.assertIs(type(my_model), BaseModel)
-        my_model.name = "Holberton"
-        my_model.my_number = 89
-        self.assertEqual(my_model.name, "Holberton")
-        self.assertEqual(my_model.my_number, 89)
-        model_types_json = {
-            "my_number": int,
-            "name": str,
-            "__class__": str,
-            "updated_at": str,
-            "id": str,
-            "created_at": str
-        }
-        my_model_json = my_model.to_dict()
-        for key, value in model_types_json.items():
-            with self.subTest(key=key, value=value):
-                self.assertIn(key, my_model_json)
-                self.assertIs(type(my_model_json[key]), value)
+    def test_BaseModel_type(self):
+        """test if the base is an type BaseModel"""
+        self.assertTrue(isinstance(self.base, BaseModel))
 
-    def test_base_types(self):
-        """ Testing dict model. """
-        second_model = BaseModel()
-        self.assertIs(type(second_model), BaseModel)
-        second_model.name = "Andres"
-        second_model.my_number = 80
-        self.assertEqual(second_model.name, "Andres")
-        self.assertEqual(second_model.my_number, 80)
-        model_types = {
-            "my_number": int,
-            "name": str,
-            "updated_at": datetime.datetime,
-            "id": str,
-            "created_at": datetime.datetime
-            }
-        for key, value in model_types.items():
-            with self.subTest(key=key, value=value):
-                self.assertIn(key, second_model.__dict__)
-                self.assertIs(type(second_model.__dict__[key]), value)
-
-    def test_uuid(self):
-        """ Testing different uuid. """
-        model = BaseModel()
-        model_2 = BaseModel()
-        self.assertNotEqual(model.id, model_2.id)
-
-    def test_datetime_model(self):
-        """ Testing datetime base model. """
-        model_3 = BaseModel()
-        model_4 = BaseModel()
-        self.assertNotEqual(model_3.created_at, model_3.updated_at)
-        self.assertNotEqual(model_3.created_at, model_4.created_at)
-
-    def test_string_representation(self):
-        """ Test the magic method str. """
-        my_model = BaseModel()
-        my_model.name = "Holberton"
-        my_model.my_number = 89
-        id_model = my_model.id
-
-        expected = '[BaseModel] ({}) {}'\
-                   .format(id_model, my_model.__dict__)
-        self.assertEqual(str(my_model), expected)
-
-    def test_constructor_kwargs(self):
-        """
-        - Test constructor that has kwargs as attributes values.
-        """
-        obj = BaseModel()
-        obj.name = "Holberton"
-        obj.my_number = 89
-        json_attributes = obj.to_dict()
-
-        obj2 = BaseModel(**json_attributes)
-
-        self.assertIsInstance(obj2, BaseModel)
-        self.assertIsInstance(json_attributes, dict)
-        self.assertIsNot(obj, obj2)
-
-    def test_file_save(self):
-        """ Test that info is saved to file. """
-        b3 = BaseModel()
-        b3.save()
-        with open("file.json", 'r') as f:
-            self.assertIn(b3.id, f.read())
+    def test_to_dict(self):
+        """ test for to_dict """
+        base_dict = self.base.to_dict()
+        self.assertEqual(self.base.__class__.__name__, 'BaseModel')
+        self.assertEqual(base_dict['created_at'],
+                         self.base.created_at.isoformat())
+        self.assertEqual(base_dict['updated_at'],
+                         self.base.updated_at.isoformat())
+        self.assertRaises(KeyError, lambda: base_dict['_sa_instance_state'])
