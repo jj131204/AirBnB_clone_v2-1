@@ -114,7 +114,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ Create an object of any class
         if not args:
             print("** class name missing **")
             return
@@ -124,6 +124,32 @@ class HBNBCommand(cmd.Cmd):
         new_instance = HBNBCommand.classes[args]()
         storage.save()
         print(new_instance.id)
+        storage.save()"""
+
+        args = args.split()
+        """new = {}"""
+
+        if len(args) == 0:
+            print("** class name missing **")
+
+        elif args[0] in self.classes:
+            obj = eval(args[0])()
+            obj.save()
+            print(obj.id)
+
+        else:
+            print("** class doesn't exist **")
+
+        """ Updated  """
+
+        new = {}
+        for a in args[1:]:
+            split_ = a.split("=")[1].replace('"', '').replace('_', ' ')
+
+            new[split_[0]] = split_
+
+        instance = self.classes[args[0]](**new)
+        print(instance.id)
         storage.save()
 
     def help_create(self):
@@ -320,5 +346,5 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     HBNBCommand().cmdloop()
