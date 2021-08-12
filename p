@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """ Console Module """
 import cmd
 import sys
@@ -125,7 +124,15 @@ class HBNBCommand(cmd.Cmd):
         if args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+
         dict_ = {}
+        """ for a in args[1:]:
+            val = a.split("=")[1].replace('"', '').replace('_', ' ')
+            if a.split("=")[0] in HBNBCommand.types.keys():
+                dict_[a.split("=")[0]] = HBNBCommand.types[a.split("=")[0]](val)
+            else:
+                dict_[a.split("=")[0]] = val
+        """
         for value in args[1:]:
             split_ = value.split("=")
             split1_ = split_[0]
@@ -220,6 +227,11 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
+            for k, v in storage.all().items():
+                if k.split('.')[0] == args:
+                    print_list.append(str(v))
+        else:
+            for k, v in storage.all().items():
             for k, v in storage._FileStorage__objects.items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
@@ -237,7 +249,11 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
+<<<<<<< HEAD
+        for k, v in storage.all().items():
+=======
         for k, v in storage._FileStorage__objects.items():
+>>>>>>> 6947e31b24a3e17e27082b063e165313dfe7c4a4
             if args == k.split('.')[0]:
                 count += 1
         print(count)
@@ -334,5 +350,10 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
+<<<<<<< HEAD
+
+if __name__ == "__main__":
+=======
 if __name__ == '__main__':
+>>>>>>> 6947e31b24a3e17e27082b063e165313dfe7c4a4
     HBNBCommand().cmdloop()
