@@ -126,6 +126,17 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
+        """kw = {}
+        for a in args[1:]:
+            val = a.split("=")[1].replace('"', '').replace('_', ' ')
+            if a.split("=")[0] in HBNBCommand.types.keys():
+                kw[a.split("=")[0]] = HBNBCommand.types[a.split("=")[0]](val)
+            else:
+                kw[a.split("=")[0]] = val
+        new_instance = HBNBCommand.classes[args[0]](**kw)
+        new_instance.save()
+        print(new_instance.id)
+        """
         dict_ = {}
         for value in args[1:]:
             split_ = value.split("=")
@@ -133,21 +144,13 @@ class HBNBCommand(cmd.Cmd):
             test = split_[0]
             test1 = split_[1]
 
-            split_ = split_[0].replace('"', ' ').replace("_", " ")
+            split_ = split_[0].replace('"', ' ').replace('_', ' ')
+            if test1[0] == '"':
+                test1 = test1[1:-1].replace("_", " ").replace('"', '\\"')
 
             dict_[test] = split_
 
-            """if test1[0] == '"':
-                test1 = test1[1:].raplace('_', ' ').replace('"', ' ')
-
-            print("split_   " + test[0])
-            print("split_[1]   " + test1)
-            print("args[1]" + "" +  args[1])
-            0].replace('"', '').replace('_', ' ')
-
-            print("dict   " + dict_[test])"""
-
-        new_instance = HBNBCommand.classes[args[0]](*dict_)
+        new_instance = HBNBCommand.classes[args[0]](**dict_)
         print(new_instance.id)
         new_instance.save()
 
