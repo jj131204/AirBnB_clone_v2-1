@@ -114,41 +114,38 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class
+        """ Create an object of any class"""
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()"""
 
         args = args.split()
-        """new = {}"""
 
-        if len(args) == 0:
-            print("** class name missing **")
-
-        elif args[0] not in self.classes:
+        if args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
+            return
 
-        """ Updated  """
+        dict_ = {}
+        """ for a in args[1:]:
+            val = a.split("=")[1].replace('"', '').replace('_', ' ')
+            if a.split("=")[0] in HBNBCommand.types.keys():
+                dict_[a.split("=")[0]] = HBNBCommand.types[a.split("=")[0]](val)
+            else:
+                dict_[a.split("=")[0]] = val
+        """
+        for value in args[1:]:
+            split_ = value.split("=")
+            split1_ = split_[0]
+            split2_ = split_[1].replace('"', '').replace('_', ' ')
 
-        new = {}
-        for a in args[1:]:
-            value = args.split("=")
-            split_ = a.split("=")[1].replace('"', '').replace('_', ' ')
+            if value.split in HBNBCommand.types.keys():
+                dict_[split2_] = HBNBCommand.types[split1_](split2_)
+            else:
+                dict_[split1_] = split2_
 
-            value_ = value[0]
-
-            new[value_] = split_
-
-        instance = self.classes[args[0]](**new)
-        print(instance.id)
-        storage.save()
+        new_instance = HBNBCommand.classes[args[0]](**dict_)
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -224,17 +221,16 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
-
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -247,7 +243,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage._FileStorage__objects.items():
+        for k, v in storage.all().items():
             if args == k.split('.')[0]:
                 count += 1
         print(count)
@@ -344,5 +340,6 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
