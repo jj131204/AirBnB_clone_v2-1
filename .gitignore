@@ -1,4 +1,9 @@
 *.swo
 *.swp
+<<<<<<< HEAD
 main_delete.py
 c
+=======
+c
+p
+>>>>>>> 6947e31b24a3e17e27082b063e165313dfe7c4a4
