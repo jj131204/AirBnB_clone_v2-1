@@ -150,7 +150,7 @@ class HBNBCommand(cmd.Cmd):
 
             dict_[test] = split_
 
-        new_instance = HBNBCommand.classes[args[0]](**dict_)
+        new_instance = HBNBCommand.classes[args[0]](*dict_)
         print(new_instance.id)
         new_instance.save()
 
