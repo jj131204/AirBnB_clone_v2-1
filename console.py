@@ -126,17 +126,6 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
-        kw = {}
-        for a in args[1:]:
-            val = a.split("=")[1].replace('"', '').replace('_', ' ')
-            if a.split("=")[0] in HBNBCommand.types.keys():
-                kw[a.split("=")[0]] = HBNBCommand.types[a.split("=")[0]](val)
-            else:
-                kw[a.split("=")[0]] = val
-        new_instance = HBNBCommand.classes[args[0]](**kw)
-        new_instance.save()
-        print(new_instance.id)
-        """
         dict_ = {}
         for value in args[1:]:
             split_ = value.split("=")
@@ -152,7 +141,7 @@ class HBNBCommand(cmd.Cmd):
 
         new_instance = HBNBCommand.classes[args[0]](*dict_)
         print(new_instance.id)
-        new_instance.save()"""
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
