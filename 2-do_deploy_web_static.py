@@ -17,13 +17,14 @@ env.hosts = ["54.242.12.22", "54.83.125.228"]
 def do_deploy(archive_path):
     """ point2 """
 
+    if not os.path.exists(archive_path):
+        return False
+
     file_ = archive_path.split('.')[0].split('/')[1]
     directory = "/data/web_static/releases/"
 
     complete = directory + file_
 
-    if not os.path.exists(archive_path):
-        return False
 
     try:
         put(archive_path, '/tmp')
@@ -33,10 +34,11 @@ def do_deploy(archive_path):
 
         run('rm -f /tmp/{}.tgz'.format(file_))
 
-        run('rm -rf data/web_static/current')
+        run('rm -rf /data/web_static/current')
         run('ln -s  {} /data/web_static/current'.format(complete))
 
         return True
 
     except:
         return False
+
