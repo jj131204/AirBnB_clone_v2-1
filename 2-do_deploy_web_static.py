@@ -25,11 +25,9 @@ def do_deploy(archive_path):
 
     complete = directory + file_
 
-
     try:
         put(archive_path, '/tmp')
         run('mkdir -p {}'.format(complete))
-
         run('tar -xzf /tmp/{}.tgz -C {}'.format(file_, complete))
 
         run('rm -f /tmp/{}.tgz'.format(file_))
@@ -41,4 +39,3 @@ def do_deploy(archive_path):
 
     except:
         return False
-
