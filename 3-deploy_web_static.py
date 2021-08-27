@@ -8,8 +8,8 @@ from datetime import datetime
 import os
 from fabric.api import local, run, put, env
 
-
 env.hosts = ["54.242.12.22", "54.83.125.228"]
+
 
 def do_pack():
     """ ... """
@@ -27,6 +27,7 @@ def do_pack():
         return file_
     except:
         return(None)
+
 
 def do_deploy(archive_path):
     """ point2 """
@@ -59,8 +60,9 @@ def do_deploy(archive_path):
     except:
         return False
 
-def deploy():
 
+def deploy():
+    """deploy"""
     new = do_pack()
 
     if new is None:
