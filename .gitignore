@@ -2,3 +2,4 @@
 *.swp
 main_delete.py
 c
+__pycache__
